@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2 Games Website</title>
+<style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #111; color: #fff; text-align: center; }
+    h1 { margin-top: 20px; }
+    #menu, #snakeGame, #carGame { display: none; }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+    canvas { background: #000; display: block; margin: 20px auto; border: 2px solid #fff; }
+</style>
+</head>
+<body>
+    <h1 id="title">Choose a Game to Play</h1>
+    <div id="menu">
+        <button onclick="startSnake()">Play Snake Game</button>
+        <button onclick="startCar()">Play Car Racing</button>
+    </div>
+    <div id="snakeGame">
+        <canvas id="snakeCanvas" width="400" height="400"></canvas><br>
+        <button onclick="restartSnake()">Restart Snake</button>
+        <button onclick="showMenu()">Back to Menu</button>
+    </div>
+    <div id="carGame">
+        <canvas id="carCanvas" width="400" height="400"></canvas><br>
+        <button onclick="restartCar()">Restart Car Racing</button>
+        <button onclick="showMenu()">Back to Menu</button>
+    </div>
+<script>
+    document.getElementById('menu').style.display = 'block';
+
+    function showMenu() {
+        document.getElementById('menu').style.display = 'block';
+        document.getElementById('snakeGame').style.display = 'none';
+        document.getElementById('carGame').style.display = 'none';
+        document.getElementById('title').innerText = 'Choose a Game to Play';
+    }
+
+    // Snake Game Logic
+    let snake, snakeDir, snakeFood, snakeInterval;
+    function startSnake() {
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('snakeGame').style.display = 'block';
+        document.getElementById('title').innerText = 'Snake Game';
+        let canvas = document.getElementById('snakeCanvas');
+        let ctx = canvas.getContext('2d');
+        snake = [{x: 160, y: 160}];
+        snakeDir = {x: 20, y: 0};
+        snakeFood = {x: 200, y: 200};
+        document.addEventListener('keydown', changeSnakeDir);
+        if (snakeInterval) clearInterval(snakeInterval);
+        snakeInterval = setInterval(function() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'lime';
+            snake.forEach(part => ctx.fillRect(part.x, part.y, 20, 20));
+            ctx.fillStyle = 'red';
+            ctx.fillRect(snakeFood.x, snakeFood.y, 20, 20);
+            let head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+            if (head.x === snakeFood.x && head.y === snakeFood.y) {
+                snake.unshift(head);
+                snakeFood = {x: Math.floor(Math.random()*20)*20, y: Math.floor(Math.random()*20)*20};
+            } else {
+                snake.pop();
+                snake.unshift(head);
+            }
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height ||
+                snake.slice(1).some(p => p.x === head.x && p.y === head.y)) {
+                alert('Game Over!');
+                restartSnake();
+            }
+        }, 150);
+    }
+    function changeSnakeDir(e) {
+        if (e.key === 'ArrowUp' && snakeDir.y === 0) snakeDir = {x: 0, y: -20};
+        else if (e.key === 'ArrowDown' && snakeDir.y === 0) snakeDir = {x: 0, y: 20};
+        else if (e.key === 'ArrowLeft' && snakeDir.x === 0) snakeDir = {x: -20, y: 0};
+        else if (e.key === 'ArrowRight' && snakeDir.x === 0) snakeDir = {x: 20, y: 0};
+    }
+    function restartSnake() { startSnake(); }
+
+    // Car Racing Game Logic
+    let carY, carX, carSpeed, carInterval, carObs;
+    function startCar() {
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('carGame').style.display = 'block';
+        document.getElementById('title').innerText = 'Car Racing Game';
+        let canvas = document.getElementById('carCanvas');
+        let ctx = canvas.getContext('2d');
+        carX = 180;
+        carY = 350;
+        carSpeed = 2;
+        carObs = [{x: 180, y: -100}];
+        document.addEventListener('keydown', moveCar);
+        if (carInterval) clearInterval(carInterval);
+        carInterval = setInterval(function() {
+            ctx.fillStyle = 'gray';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'yellow';
+            ctx.fillRect(190, 0, 20, canvas.height);
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(carX, carY, 40, 50);
+            carObs.forEach(o => {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(o.x, o.y, 40, 50);
+                o.y += carSpeed;
+            });
+            if (carObs[0].y > canvas.height) {
+                carObs[0].y = -100;
+                carObs[0].x = Math.random() < 0.5 ? 120 : 240;
+            }
+            if (carObs.some(o => o.y + 50 > carY && o.y < carY + 50 && o.x === carX)) {
+                alert('Crash! Game Over!');
+                restartCar();
+            }
+        }, 20);
+    }
+    function moveCar(e) {
+        if (e.key === 'ArrowLeft' && carX > 120) carX -= 60;
+        else if (e.key === 'ArrowRight' && carX < 240) carX += 60;
+    }
+    function restartCar() { startCar(); }
+</script>
+</body>
+</html>
