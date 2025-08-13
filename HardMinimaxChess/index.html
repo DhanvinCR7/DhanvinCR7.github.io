@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hard Chess (Minimax)</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h2>Hard Chess (Minimax)</h2>
+  <div id="controls">
+    <button id="mode2p">2 Player</button>
+    <button id="modeHard">AI Hard (Minimax)</button>
+  </div>
+  <div id="turn"></div>
+  <div id="board"></div>
+
+  <!-- Overlay for CHECK / CHECKMATE -->
+  <div id="overlay"></div>
+
+  <!-- Sounds -->
+  <audio id="snd-move" src="move.wav" preload="auto"></audio>
+  <audio id="snd-check" src="check.wav" preload="auto"></audio>
+  <audio id="snd-mate" src="checkmate.wav" preload="auto"></audio>
+
+  <script src="script.js"></script>
+</body>
+</html>
